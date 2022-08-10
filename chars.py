@@ -13,6 +13,7 @@ from pygame.locals import (
 
 SIZE_OF_OBJECT = (50, 50)
 WIDTH, HEIGHT = 1920, 1080
+player_width, player_height = 50, 50
 
 
 class Enemy(sprite.Sprite):
@@ -37,8 +38,8 @@ class Enemy(sprite.Sprite):
 class Player(sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = Surface(SIZE_OF_OBJECT)
-        self.surf.fill((255, 255, 255))
+        self.surf = Surface((player_width, player_height))
+        self.surf.fill(color='white')
         self.rect = self.surf.get_rect()
 
     def update(self, pressed):

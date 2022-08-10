@@ -1,5 +1,6 @@
-
 N = 5
+
+
 class Puzzle:
     def __init__(self):
         self.start = [0, 0]
@@ -10,7 +11,8 @@ class Puzzle:
                      [1, 0, 1, 0, 1],
                      ['E', 0, 1, 1, 1]]
 
-def print_maze(self):
+
+def print_maze(self) -> None:
     for i in range(len(self) + 2):
         print("--", end="")
     print("")
@@ -28,14 +30,14 @@ def print_maze(self):
     print("")
 
 
-def isSafe(maze, x, y):
+def isSafe(maze, x, y) -> bool:
     if x >= 0 and x < N and y >= 0 and y < N and maze[x][y] == 1:
         return True
 
     return False
 
 
-def solveMaze(maze):
+def solveMaze(maze) -> bool:
     sol = [[0 for j in range(N)] for i in range(N)]
     if solveMazeUtil(maze, 0, 0, sol) == False:
         print("Solution doesn't exist")
@@ -44,29 +46,29 @@ def solveMaze(maze):
     return True
 
 
-def solveMazeUtil(maze, x, y, sol):
+def solveMazeUtil(maze, x, y, sol) -> bool:
     if x == N - 1 and y == N - 1 and maze[x][y] == 1:
         sol[x][y] = 1
         return True
 
     # Check if maze[x][y] is valid
-    if isSafe(maze, x, y) == True:
+    if isSafe(maze, x, y):
 
         if sol[x][y] == 1:
             return False
 
         sol[x][y] = 1
 
-        if solveMazeUtil(maze, x + 1, y, sol) == True:
+        if solveMazeUtil(maze, x + 1, y, sol):
             return True
 
-        if solveMazeUtil(maze, x, y + 1, sol) == True:
+        if solveMazeUtil(maze, x, y + 1, sol):
             return True
 
-        if solveMazeUtil(maze, x - 1, y, sol) == True:
+        if solveMazeUtil(maze, x - 1, y, sol):
             return True
 
-        if solveMazeUtil(maze, x, y - 1, sol) == True:
+        if solveMazeUtil(maze, x, y - 1, sol):
             return True
 
         sol[x][y] = 0
