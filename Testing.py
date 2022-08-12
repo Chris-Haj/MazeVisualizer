@@ -3,8 +3,6 @@ from chars import *
 
 pg.init()
 
-
-
 def mainLoop(screen: pg.display) -> None:
     running = True
     clock = pg.time.Clock()
