@@ -11,38 +11,28 @@ from pygame.locals import (
     QUIT
 )
 
-SIZE_OF_OBJECT = (50, 50)
-WIDTH, HEIGHT = 1920, 1080
-player_width, player_height = 50, 50
+WIDTH, HEIGHT = 500, 500
+DIM = 5
+GRID = DIM * DIM
+SIZE_OF_OBJECT = (WIDTH // DIM, HEIGHT // DIM)
 
 
-class Enemy(sprite.Sprite):
-    def __init__(self):
-        super(Enemy, self).__init__()
-        self.surf = Surface(SIZE_OF_OBJECT)
-        self.surf.fill(color='red')
-        self.rect = self.surf.get_rect(
-            center=(
-                WIDTH,
-                ra.randint(0, HEIGHT)
-            )
-        )
-        self.speed = ra.randint(5, 15)
-
-    def update(self):
-        self.rect.move_ip(-self.speed, 0)
-        if self.rect.left < 0:
-            self.kill()
+class Wall(sprite.Sprite):
+    def __init__(self, position: tuple[2]):
+        super(Wall, self).__init__()
+        self.surf = Surface(tuple(SIZE_OF_OBJECT[i] - 4 for i in range(2)))
+        self.surf.fill(color='grey')
+        self.rect = self.surf.get_rect(center=position)
 
 
 class Player(sprite.Sprite):
-    def __init__(self):
+    def __init__(self, position: tuple[int, int]):
         super(Player, self).__init__()
-        self.surf = Surface((player_width, player_height))
+        self.surf = Surface(tuple(SIZE_OF_OBJECT[i] - 4 for i in range(2)))
         self.surf.fill(color='white')
-        self.rect = self.surf.get_rect()
+        self.rect = self.surf.get_rect(center=position)
 
-    def update(self, pressed):
+    def update(self, pressed) -> None:
         if pressed[K_UP]:
             self.rect.move_ip(0, -5)
         if pressed[K_DOWN]:

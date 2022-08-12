@@ -5,33 +5,15 @@ class Puzzle:
     def __init__(self):
         self.start = [0, 0]
         self.end = [4, 0]
-        self.maze = [['S', 1, 1, 1, 1],
+        self.maze = [[1, 1, 1, 1, 1],
                      [0, 0, 0, 0, 1],
                      [1, 1, 1, 0, 1],
                      [1, 0, 1, 0, 1],
-                     ['E', 0, 1, 1, 1]]
-
-
-def print_maze(self) -> None:
-    for i in range(len(self) + 2):
-        print("--", end="")
-    print("")
-    for i in range(len(self)):
-        print("| ", end="")
-        for j in range(len(self[i])):
-            print(self[i][j], end=" ")
-        if i < (len(self)):
-            print("|")
-        else:
-            print("|", end="")
-
-    for i in range(len(self) + 2):
-        print("--", end="")
-    print("")
+                     [1, 0, 1, 1, 1]]
 
 
 def isSafe(maze, x, y) -> bool:
-    if x >= 0 and x < N and y >= 0 and y < N and maze[x][y] == 1:
+    if 0 <= x < N and 0 <= y < N and maze[x][y] == 1:
         return True
 
     return False
@@ -39,10 +21,9 @@ def isSafe(maze, x, y) -> bool:
 
 def solveMaze(maze) -> bool:
     sol = [[0 for j in range(N)] for i in range(N)]
-    if solveMazeUtil(maze, 0, 0, sol) == False:
+    if not solveMazeUtil(maze, 0, 0, sol):
         print("Solution doesn't exist")
         return False
-    print_maze(maze)
     return True
 
 
@@ -75,10 +56,4 @@ def solveMazeUtil(maze, x, y, sol) -> bool:
         return False
 
 
-def main():
-    puzzle = Puzzle()
-    solveMaze(puzzle.maze)
 
-
-if __name__ == '__main__':
-    main()
