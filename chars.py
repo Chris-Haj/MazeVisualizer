@@ -18,7 +18,7 @@ SIZE_OF_OBJECT = (WIDTH // DIM, HEIGHT // DIM)
 
 
 class Wall(sprite.Sprite):
-    def __init__(self, position: tuple[2]):
+    def __init__(self, position: tuple[int,int]):
         super(Wall, self).__init__()
         self.surf = Surface(tuple(SIZE_OF_OBJECT[i] - 4 for i in range(2)))
         self.surf.fill(color='grey')
