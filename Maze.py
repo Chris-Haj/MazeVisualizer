@@ -2,6 +2,7 @@ N = 6
 
 
 class Puzzle:
+    
     def __init__(self):
         self.start = [0, 0]
         self.end = [5, 0]
