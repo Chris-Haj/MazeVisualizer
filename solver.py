@@ -1,22 +1,20 @@
-N = 6
-
-def isSafe(maze, x, y) -> bool:
-    if 0 <= x < N and 0 <= y < N and maze[x][y] == 1:
+def isSafe(maze, x, y, n, m) -> bool:
+    if 0 <= x < n and 0 <= y < m and maze[x][y] == 1:
         return True
 
     return False
 
 
-def solveMaze(maze) -> bool:
-    sol = [[0 for j in range(N)] for i in range(N)]
+def solveMaze(maze, n, m) -> bool:
+    sol = [[0 for j in range(n)] for i in range(m)]
     if not solveMazeUtil(maze, 0, 0, sol):
         print("Solution doesn't exist")
         return False
     return True
 
 
-def solveMazeUtil(maze, x, y, sol) -> bool:
-    if x == N - 1 and y == N - 1 and maze[x][y] == 1:
+def solveMazeUtil(maze, x, y, sol, n, m) -> bool:
+    if x == n - 1 and y == m - 1 and maze[x][y] == 1:
         sol[x][y] = 1
         return True
 
@@ -42,6 +40,3 @@ def solveMazeUtil(maze, x, y, sol) -> bool:
 
         sol[x][y] = 0
         return False
-
-
-

@@ -1,3 +1,5 @@
+import random
+
 from pygame import sprite, Surface
 from MazeGen import MazeGen
 import numpy as np
@@ -17,10 +19,10 @@ class Puzzle:
     def __init__(self, Generator: MazeGen, BlockSize: int):
         Center = lambda number: (number * BlockSize) + (BlockSize // 2)
         self.entities = sprite.Group()
-        self.start = [Center(i) for i in Generator.startPoint]
-        self.start = self.start[::-1]
-        self.end = [Center(i) for i in Generator.endPoint]
-        self.end = self.end[::-1]
+        self.start = [Center(i) for i in Generator.startPoint][::-1]
+
+        self.end = [Center(i) for i in Generator.endPoint][::-1]
+
         self.maze = Generator.Board
         self.height, self.width = Generator.Shape
 
@@ -53,7 +55,9 @@ class Wall(sprite.Sprite):
     def __init__(self, position: tuple[int, int], BlockSize: int):
         super(Wall, self).__init__()
         self.surf = Surface((BlockSize, BlockSize))
-        self.surf.fill(color='purple')
+        colors = ['purple']
+        index = random.randint(0,len(colors)-1)
+        self.surf.fill(color=colors[index])
         self.rect = self.surf.get_rect(center=position)
 
 
@@ -108,5 +112,5 @@ class Goal(sprite.Sprite):
     def __init__(self, position, BlockSize: int):
         super(Goal, self).__init__()
         self.surf = Surface((BlockSize, BlockSize))
-        self.surf.fill(color='cyan')
+        self.surf.fill(color='magenta')
         self.rect = self.surf.get_rect(center=position)
