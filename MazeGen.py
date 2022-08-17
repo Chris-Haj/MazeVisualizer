@@ -3,13 +3,14 @@ from array import ArrayType
 import os
 import numpy as np
 import random as rn
-
+from tkinter import *
 class MazeGen:
     
     Shape:tuple
     Board:ArrayType
     startPoint:tuple
     endPoint:tuple
+    
     
     def __init__(self,height:int,width:int = 0,startPoint:tuple = (-1,-1)):
         if width == 0:
@@ -26,6 +27,7 @@ class MazeGen:
     def genMaze(self):
         verStack = []
         checkOfset = lambda i,j,off_i,off_j : self.Board[i+off_i][j+off_j] == 0
+    
         
         verStack.append(self.startPoint)
         visted = 1
@@ -76,6 +78,7 @@ class MazeGen:
             
                 verStack.append(neighborList[nextVerindex])
                 visted+=1
+
         left = 0
         right = 0
         up = 0
@@ -106,7 +109,14 @@ class MazeGen:
         ind_xs = rn.randint(0,self.Shape[0]-1)
         ind_xe = rn.randint(0,self.Shape[0]-1)
 
+        while self.Board[ind_xs][1] == 0:
+            ind_xs = rn.randint(0,self.Shape[0]-1)
+        
         self.Board[ind_xs][0] = 1
+
+        while self.Board[ind_xe][self.Shape[1]-2] == 0:
+            ind_xe = rn.randint(0,self.Shape[0]-1)
+
         self.Board[ind_xe][self.Shape[1]-1] = 1 
 
         self.startPoint = (ind_xs,0)
@@ -119,10 +129,13 @@ class MazeGen:
             for j in range(self.Shape[1]):
                 if(self.Board[i][j] == 1):
                     string += "  "
-                else:
+                elif self.Board[i][j] == 2:
+                    string += "  "
+                elif self.Board[i][j] == 3:
+                    string += "P "
+                elif self.Board[i][j] == 0:
                     string += "# "
+                    
             string += "\n"
 
         return string
-
-
