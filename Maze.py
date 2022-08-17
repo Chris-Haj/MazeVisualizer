@@ -1,61 +1,82 @@
-N = 6
+from Types import *
+from MazeGen import MazeGen
+import pygame as pg
 
 
-class Puzzle:
-    
-    def __init__(self):
-        self.start = [0, 0]
-        self.end = [5, 0]
-        self.maze = [[1, 1, 1, 1, 1, 0],
-                     [0, 0, 0, 0, 1, 1],
-                     [1, 1, 1, 0, 0, 1],
-                     [1, 0, 1, 0, 1, 1],
-                     [1, 0, 1, 0, 1, 0],
-                     [1, 0, 1, 1, 1, 0]]
+def setUp():
+
+    HEIGHT, WIDTH = 800, 800
+    BlockSize = 100
+    ColDim = HEIGHT // BlockSize
+    RowDim = WIDTH // BlockSize
+    HEIGHT, WIDTH = HEIGHT + BlockSize, WIDTH + BlockSize
+
+    Generator = MazeGen(ColDim, RowDim)
+    puzzle = Puzzle(Generator, BlockSize)
+    screen = pg.display.set_mode((WIDTH, HEIGHT))
+    mainLoop(screen, puzzle.player, puzzle.entities, puzzle.WallCoords, HEIGHT, WIDTH, BlockSize)
 
 
-def isSafe(maze, x, y) -> bool:
-    if 0 <= x < N and 0 <= y < N and maze[x][y] == 1:
-        return True
-
-    return False
-
-
-def solveMaze(maze) -> bool:
-    sol = [[0 for j in range(N)] for i in range(N)]
-    if not solveMazeUtil(maze, 0, 0, sol):
-        print("Solution doesn't exist")
-        return False
-    return True
+def drawGrid(screen: pg.display, WIDTH, HEIGHT, SIZE) -> None:
+    for i in range(0, WIDTH + 100, SIZE):
+        pg.draw.line(screen, color='white', start_pos=(i, 0), end_pos=(i, HEIGHT))
+        pg.draw.line(screen, color='white', start_pos=(0, i), end_pos=(HEIGHT, i))
 
 
-def solveMazeUtil(maze, x, y, sol) -> bool:
-    if x == N - 1 and y == N - 1 and maze[x][y] == 1:
-        sol[x][y] = 1
-        return True
+def Animate(screen, clock, entities, FPS, color):
+    steroids = 12
+    running = True
+    group = sprite.Group()
+    for i in entities:
+        clock.tick(FPS * steroids)
+        for event in pg.event.get():
 
-    # Check if maze[x][y] is valid
-    if isSafe(maze, x, y):
-
-        if sol[x][y] == 1:
-            return False
-
-        sol[x][y] = 1
-
-        if solveMazeUtil(maze, x + 1, y, sol):
-            return True
-
-        if solveMazeUtil(maze, x, y + 1, sol):
-            return True
-
-        if solveMazeUtil(maze, x - 1, y, sol):
-            return True
-
-        if solveMazeUtil(maze, x, y - 1, sol):
-            return True
-
-        sol[x][y] = 0
-        return False
+            if event.type == QUIT:
+                running = False
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
+        if not running:
+            break
+        screen.fill(color=color)
+        for j in group:
+            screen.blit(j.surf, j.rect)
+        group.add(i)
+        pg.display.update()
 
 
+def mainLoop(screen, player, entities, walls, h, w, size):
+    running = True
+    color = 'black'
+    clock = pg.time.Clock()
+    FPS = 15
+    curPos = player.startingPos
+    pressed = None
+    Animate(screen, clock, entities, FPS, color)
+    pressed = pg.key.get_pressed()
+    Grid = False
+    while running:
+        clock.tick(FPS)
 
+        for event in pg.event.get():
+
+            pressed = pg.key.get_pressed()
+
+            if event.type == QUIT:
+                running = False
+            elif event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
+                if event.key == K_SPACE:
+                    Grid = not Grid
+        screen.fill(color=color)
+        if Grid:
+            drawGrid(screen, h, w, size)
+        for entity in entities:
+            screen.blit(entity.surf, entity.rect)
+        player.update(pressed, curPos, walls, h, w)
+        pg.display.update()
+
+
+if __name__ == '__main__':
+    setUp()
