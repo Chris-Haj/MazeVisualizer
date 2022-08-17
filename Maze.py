@@ -5,7 +5,7 @@ import pygame as pg
 
 def setUp():
 
-    HEIGHT, WIDTH = 400, 400
+    HEIGHT, WIDTH = 800, 800
     BlockSize = 100
     ColDim = HEIGHT // BlockSize
     RowDim = WIDTH // BlockSize
@@ -33,6 +33,9 @@ def Animate(screen, clock, entities, FPS, color):
 
             if event.type == QUIT:
                 running = False
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
         if not running:
             break
         screen.fill(color=color)
@@ -51,6 +54,7 @@ def mainLoop(screen, player, entities, walls, h, w, size):
     pressed = None
     Animate(screen, clock, entities, FPS, color)
     pressed = pg.key.get_pressed()
+    Grid = False
     while running:
         clock.tick(FPS)
 
@@ -63,8 +67,11 @@ def mainLoop(screen, player, entities, walls, h, w, size):
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     running = False
+                if event.key == K_SPACE:
+                    Grid = not Grid
         screen.fill(color=color)
-        drawGrid(screen, h, w, size)
+        if Grid:
+            drawGrid(screen, h, w, size)
         for entity in entities:
             screen.blit(entity.surf, entity.rect)
         player.update(pressed, curPos, walls, h, w)

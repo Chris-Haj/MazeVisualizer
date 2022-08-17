@@ -31,8 +31,8 @@ class Puzzle:
         self.CenterOfBlocks = np.zeros((self.height, self.width, 2), dtype=int)
         for i in range(self.height):
             for j in range(self.width):
-                self.CenterOfBlocks[i][j][0] = Center(i)
-                self.CenterOfBlocks[i][j][1] = Center(j)
+                self.CenterOfBlocks[i][j][0] = Center(j)
+                self.CenterOfBlocks[i][j][1] = Center(i)
         self.Walls = np.array([], dtype=Wall)
         self.WallCoords = []
         i = cur = WallCur = 0
@@ -40,8 +40,8 @@ class Puzzle:
             j = 0
             for block in row:
                 if block == 0:
-                    self.Walls = np.append(self.Walls, Wall((self.CenterOfBlocks[j][i]), BlockSize - 4))
-                    self.WallCoords.insert(WallCur, np.array(self.CenterOfBlocks[j][i]))
+                    self.WallCoords.insert(WallCur, np.array(self.CenterOfBlocks[i][j]))
+                    self.Walls = np.append(self.Walls, Wall((self.CenterOfBlocks[i][j]), BlockSize - 4))
                     self.entities.add(self.Walls[cur])
                     cur += 1
                 j += 1
@@ -112,5 +112,5 @@ class Goal(sprite.Sprite):
     def __init__(self, position, BlockSize: int):
         super(Goal, self).__init__()
         self.surf = Surface((BlockSize, BlockSize))
-        self.surf.fill(color='magenta')
+        self.surf.fill(color='deepskyblue')
         self.rect = self.surf.get_rect(center=position)
