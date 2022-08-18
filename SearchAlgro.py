@@ -1,127 +1,110 @@
-from ast import main
-import os
-from turtle import shape
-import numpy as np
-from tkinter import *
-import time
+
 from MazeGen import MazeGen
-import random as rn 
+from Types import Puzzle
 import sys
 
 
 class SearchAlgo:
+    DFSStop: bool
+    Puzzle: Puzzle
+    DFSDict: dict
 
-    DfsStop:bool
-    Puzzle:MazeGen
-    DfsDict : dict
+    def DFSHelper(self, currVer: tuple, end: tuple):
 
-    def DfsHelper(self,currVer:tuple,endPoint:tuple):
+        self.Puzzle.maze[currVer] = 2
 
-        self.Puzzle.Board[currVer] = 2
-        
-
-        if(self.DfsStop):
+        if (self.DFSStop):
             return
 
-        checkOfset = lambda i,j,off_i,off_j : self.Puzzle.Board[i+off_i][j+off_j] == 1
-        shape = self.Puzzle.Shape
-        if currVer == endPoint:
-            self.DfsStop =True
+        checkOfset = lambda i, j, off_i, off_j: self.Puzzle.maze[i + off_i][j + off_j] == 1
+        shape = (self.Puzzle.height, self.Puzzle.width)
+        if currVer == end:
+            self.DFSStop = True
 
             while currVer != None:
+                self.Puzzle.maze[currVer] = 3
+                currVer = self.DfsDict[currVer]
 
-                self.Puzzle.Board[currVer] = 3
-                currVer = self.DfsDict[currVer] 
-        
             return
-        if(currVer[0] > 0 and checkOfset(currVer[0],currVer[1],-1,0)):
-            
-            self.DfsDict[(currVer[0]-1,currVer[1])]=currVer
-            self.DfsHelper((currVer[0]-1,currVer[1]),endPoint)
-            
-        if(currVer[0] < shape[0]-1 and checkOfset(currVer[0],currVer[1],1,0)):
-            self.DfsDict[(currVer[0]+1,currVer[1])]=currVer
-            self.DfsHelper((currVer[0]+1,currVer[1]),endPoint)
+        if currVer[0] > 0 and checkOfset(currVer[0], currVer[1], -1, 0):
+            self.DfsDict[(currVer[0] - 1, currVer[1])] = currVer
+            self.DFSHelper((currVer[0] - 1, currVer[1]), end)
 
-        if(currVer[1] > 0 and checkOfset(currVer[0],currVer[1],0,-1)):
-            self.DfsDict[(currVer[0],currVer[1]-1)]=currVer
-            self.DfsHelper((currVer[0],currVer[1]-1),endPoint)
-            
-        if(currVer[1] < shape[1]-1 and checkOfset(currVer[0],currVer[1],0,1)):
-            self.DfsDict[(currVer[0],currVer[1]+1)]=currVer
-            self.DfsHelper((currVer[0],currVer[1]+1),endPoint)
+        if currVer[0] < shape[0] - 1 and checkOfset(currVer[0], currVer[1], 1, 0):
+            self.DfsDict[(currVer[0] + 1, currVer[1])] = currVer
+            self.DFSHelper((currVer[0] + 1, currVer[1]), end)
 
-    def Dfs(self,startPoint:tuple = (-1,-1),endPoint : tuple = (-1,-1)):
-        
-        if startPoint == (-1,-1):
-            startPoint = self.Puzzle.startPoint
-        if endPoint == (-1,-1):
-            endPoint = self.Puzzle.endPoint
+        if currVer[1] > 0 and checkOfset(currVer[0], currVer[1], 0, -1):
+            self.DfsDict[(currVer[0], currVer[1] - 1)] = currVer
+            self.DFSHelper((currVer[0], currVer[1] - 1), end)
 
-        self.DfsStop = False
+        if currVer[1] < shape[1] - 1 and checkOfset(currVer[0], currVer[1], 0, 1):
+            self.DfsDict[(currVer[0], currVer[1] + 1)] = currVer
+            self.DFSHelper((currVer[0], currVer[1] + 1), end)
+
+    def DFS(self, start: tuple = (-1, -1), end: tuple = (-1, -1)):
+
+        if start == (-1, -1):
+            start = self.Puzzle.start
+        if end == (-1, -1):
+            end = self.Puzzle.end
+
+        self.DFSStop = False
         self.DfsDict = dict()
-        self.DfsDict[startPoint] = None
-        self.Dfs(startPoint,endPoint)
+        self.DfsDict[start] = None
+        self.DFS(start, end)
 
-    def Bfs(self,startPoint:tuple = (-1,-1),endPoint : tuple = (-1,-1)):
+    def BFS(self, start: tuple = (-1, -1), end: tuple = (-1, -1)):
 
-        if startPoint == (-1,-1):
-            startPoint = self.Puzzle.startPoint
-        if endPoint == (-1,-1):
-            endPoint = self.Puzzle.endPoint
+        if start == (-1, -1):
+            start = self.Puzzle.start
+        if end == (-1, -1):
+            end = self.Puzzle.end
+        verQueue = [start]
+        print(start)
+        self.Puzzle.maze[start] = 2
+        shape = (self.Puzzle.height, self.Puzzle.width)
 
-        verQueue = [startPoint]
-        self.Puzzle.Board[startPoint] = 2
-        shape = self.Puzzle.Shape
-
-        checkOfset = lambda i,j,off_i,off_j : self.Puzzle.Board[i+off_i][j+off_j] == 1
-        
-        def setCell(currVer:tuple,off_i,off_j):
-            i,j= currVer
-            verQueue.insert(0,(i+off_i,j+off_j))
-            self.Puzzle.Board[(i+off_i,j+off_j)] = 2
-            path[(i+off_i,j+off_j)] = (i,j)
-
+        checkOfset = lambda i, j, off_i, off_j: self.Puzzle.maze[i + off_i][j + off_j] == 1
         path = dict()
-        path[startPoint] = None
+
+        def setCell(currVer: tuple, off_i, off_j):
+            i, j = currVer
+            verQueue.insert(0, (i + off_i, j + off_j))
+            self.Puzzle.maze[(i + off_i, j + off_j)] = 2
+            path[(i + off_i, j + off_j)] = (i, j)
+
+        path[start] = None
 
         while len(verQueue) > 0:
 
             currVer = verQueue.pop()
 
-            if(currVer == endPoint):
-                
+            if currVer == end:
+
                 while currVer != None:
-                    self.Puzzle.Board[currVer] = 3
+                    self.Puzzle.maze[currVer] = 3
                     currVer = path[currVer]
                 return
 
-            if(currVer[0] > 0 and checkOfset(currVer[0],currVer[1],-1,0)):
-                setCell(currVer,-1,0)
-            
-            if(currVer[0] < shape[0]-1 and checkOfset(currVer[0],currVer[1],1,0)):
-                setCell(currVer,1,0)
-            
-            if(currVer[1] > 0 and checkOfset(currVer[0],currVer[1],0,-1)):
-                setCell(currVer,0,-1)            
-                
-            if(currVer[1] < shape[1]-1 and checkOfset(currVer[0],currVer[1],0,1)):
-                setCell(currVer,0,1)
+            if currVer[0] > 0 and checkOfset(currVer[0], currVer[1], -1, 0):
+                setCell(currVer, -1, 0)
 
+            if currVer[0] < shape[0] - 1 and checkOfset(currVer[0], currVer[1], 1, 0):
+                setCell(currVer, 1, 0)
 
-    def __init__(self,Puzzle:MazeGen):
-        self.DfsStop = False
+            if currVer[1] > 0 and checkOfset(currVer[0], currVer[1], 0, -1):
+                setCell(currVer, 0, -1)
+
+            if currVer[1] < shape[1] - 1 and checkOfset(currVer[0], currVer[1], 0, 1):
+                setCell(currVer, 0, 1)
+
+    def __init__(self, Puzzle: Puzzle):
+        self.DFSStop = False
         self.Puzzle = Puzzle
         self.DfsDict = None
+        sys.setrecursionlimit(100000)
+
 
 if __name__ == "__main__":
-
-    sys.setrecursionlimit(100000)
-    
-    m = MazeGen(40)
-    s = SearchAlgo(m)
-    s.Bfs()
-    print(m)
-    
-    
-    
+    pass

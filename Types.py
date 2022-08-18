@@ -4,14 +4,10 @@ from pygame import sprite, Surface
 from MazeGen import MazeGen
 import numpy as np
 from pygame.locals import (
-    KEYDOWN,
-    K_ESCAPE,
     K_UP,
     K_DOWN,
     K_LEFT,
-    K_RIGHT,
-    K_SPACE,
-    QUIT
+    K_RIGHT
 )
 
 
@@ -19,15 +15,15 @@ class Puzzle:
     def __init__(self, Generator: MazeGen, BlockSize: int):
         Center = lambda number: (number * BlockSize) + (BlockSize // 2)
         self.entities = sprite.Group()
-        self.start = [Center(i) for i in Generator.startPoint][::-1]
-
-        self.end = [Center(i) for i in Generator.endPoint][::-1]
+        self.start, self.end = Generator.startPoint, Generator.endPoint
+        self.GridStart = [Center(i) for i in Generator.startPoint][::-1]
+        self.GridEnd = [Center(i) for i in Generator.endPoint][::-1]
 
         self.maze = Generator.Board
         self.height, self.width = Generator.Shape
 
-        self.player = Player(self.start, BlockSize - 4, Generator.Shape)
-        self.goal = Goal(self.end, BlockSize - 4)
+        self.player = Player(self.GridStart, BlockSize - 4, Generator.Shape)
+        self.goal = Goal(self.GridEnd, BlockSize - 4)
         self.CenterOfBlocks = np.zeros((self.height, self.width, 2), dtype=int)
         for i in range(self.height):
             for j in range(self.width):
@@ -56,7 +52,7 @@ class Wall(sprite.Sprite):
         super(Wall, self).__init__()
         self.surf = Surface((BlockSize, BlockSize))
         colors = ['purple']
-        index = random.randint(0,len(colors)-1)
+        index = random.randint(0, len(colors) - 1)
         self.surf.fill(color=colors[index])
         self.rect = self.surf.get_rect(center=position)
 
@@ -67,11 +63,11 @@ class Player(sprite.Sprite):
         self.surf = Surface((BlockSize, BlockSize))
         self.surf.fill(color='white')
         self.rect = self.surf.get_rect(center=position)
-        self.jump = BlockSize+4
+        self.jump = BlockSize + 4
         self.height, self.width = Sizes
         self.startingPos = list(position)
 
-    def update(self, pressed, curPos, walls: list,height,width) -> None:
+    def update(self, pressed, curPos, walls: list, height, width) -> None:
         nextPos = np.array(curPos)
         CanMove = True
         if pressed[K_UP] and curPos[1] != self.jump // 2:
@@ -109,6 +105,14 @@ class Player(sprite.Sprite):
 
 
 class Goal(sprite.Sprite):
+    def __init__(self, position, BlockSize: int):
+        super(Goal, self).__init__()
+        self.surf = Surface((BlockSize, BlockSize))
+        self.surf.fill(color='deepskyblue')
+        self.rect = self.surf.get_rect(center=position)
+
+
+class Path(sprite.Sprite):
     def __init__(self, position, BlockSize: int):
         super(Goal, self).__init__()
         self.surf = Surface((BlockSize, BlockSize))
