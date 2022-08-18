@@ -19,8 +19,8 @@ def setUp() -> None:
     global createAnotherGame
     while createAnotherGame:
         createAnotherGame = False
-        HEIGHT, WIDTH = 800, 800
-        BlockSize: int = 100
+        HEIGHT, WIDTH = 800, 1800
+        BlockSize: int = 50
         ColDim: int = HEIGHT // BlockSize
         RowDim: int = WIDTH // BlockSize
         HEIGHT, WIDTH = HEIGHT + BlockSize, WIDTH + BlockSize
@@ -62,7 +62,7 @@ def mainLoop(screen: pg.display, puzzle: Puzzle, h: int, w: int, size: int) -> N
 
         screen.fill(color=color)
         if Grid:
-            drawGrid(screen, w, h, size)
+            drawGrid(screen, h, w, size)
         for entity in puzzle.entities:
             screen.blit(entity.surf, entity.rect)
         puzzle.player.update(pressed, curPos, puzzle.WallCoords, h, w)
