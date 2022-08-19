@@ -11,15 +11,17 @@ from pygame.locals import (
 )
 from solver import solveMaze
 from SearchAlgro import SearchAlgo
+from os import system
 
 createAnotherGame = True
 
 
 def setUp() -> None:
     global createAnotherGame
+    pg.init()
     while createAnotherGame:
         createAnotherGame = False
-        HEIGHT, WIDTH = 800, 1800
+        HEIGHT, WIDTH = 600, 1400
         BlockSize: int = 50
         ColDim: int = HEIGHT // BlockSize
         RowDim: int = WIDTH // BlockSize
@@ -32,12 +34,14 @@ def setUp() -> None:
 
 def mainLoop(screen: pg.display, puzzle: Puzzle, h: int, w: int, size: int) -> None:
     global createAnotherGame
+    path = sprite.Group()
     running: bool = True
     Grid: bool = False
     color: str = 'black'
     clock: pg.time.Clock = pg.time.Clock()
-    FPS: int = 20
-    curPos: list = puzzle.player.startingPos
+    FPS: int = 15
+    curPos: list = puzzle.GridStart
+    startSolve = list(puzzle.start)
     Animate(screen, clock, puzzle.entities, FPS, color)
     pressed = pg.key.get_pressed()
     while running:
@@ -55,17 +59,21 @@ def mainLoop(screen: pg.display, puzzle: Puzzle, h: int, w: int, size: int) -> N
                 if event.key == K_SPACE:
                     Grid = not Grid
                 if event.key == K_r:
+                    system('cls')
                     createAnotherGame = True
                     running = False
                 if event.key == K_s:
-                    solveMaze(puzzle.maze, h, w, curPos, puzzle.GridEnd)
+                    solveMaze(puzzle, startSolve, screen, pg, clock)
 
         screen.fill(color=color)
         if Grid:
             drawGrid(screen, h, w, size)
+        for block in puzzle.path:
+            screen.blit(block[0].surf, block[0].rect)
         for entity in puzzle.entities:
             screen.blit(entity.surf, entity.rect)
-        puzzle.player.update(pressed, curPos, puzzle.WallCoords, h, w)
+
+        puzzle.player.update(pressed, curPos, puzzle.WallCoords, h, w, startSolve)
         pg.display.update()
 
 
