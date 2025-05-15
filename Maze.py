@@ -10,19 +10,18 @@ from pygame.locals import (
     QUIT
 )
 from solver import solveMaze
-from SearchAlgro import SearchAlgo
-from os import system
 
 createAnotherGame = True
-
 
 def setUp() -> None:
     global createAnotherGame
     pg.init()
     while createAnotherGame:
         createAnotherGame = False
-        HEIGHT, WIDTH = 600, 1400
-        BlockSize: int = 50
+        # HEIGHT, WIDTH = int(input("Please enter the height and width of the maze\n")) * 100, int(input()) * 100
+        # BlockSize: int = int(input("Please enter the size of block\n"))
+        HEIGHT, WIDTH = 800, 1600
+        BlockSize = 20
         ColDim: int = HEIGHT // BlockSize
         RowDim: int = WIDTH // BlockSize
         HEIGHT, WIDTH = HEIGHT + BlockSize, WIDTH + BlockSize
@@ -59,7 +58,6 @@ def mainLoop(screen: pg.display, puzzle: Puzzle, h: int, w: int, size: int) -> N
                 if event.key == K_SPACE:
                     Grid = not Grid
                 if event.key == K_r:
-                    system('cls')
                     createAnotherGame = True
                     running = False
                 if event.key == K_s:
@@ -70,6 +68,8 @@ def mainLoop(screen: pg.display, puzzle: Puzzle, h: int, w: int, size: int) -> N
             drawGrid(screen, h, w, size)
         for block in puzzle.path:
             screen.blit(block[0].surf, block[0].rect)
+        if len(puzzle.path) != 0:
+            puzzle.path.pop(0)
         for entity in puzzle.entities:
             screen.blit(entity.surf, entity.rect)
 

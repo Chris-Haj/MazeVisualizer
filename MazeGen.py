@@ -129,6 +129,3 @@ class MazeGen:
             string += "\n"
 
         return string
-
-
-

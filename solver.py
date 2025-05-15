@@ -7,7 +7,7 @@ def isValid(maze, n, m, x, y, res):
     return False
 
 
-def MazeSolve(puzzle, moveX, moveY, position, res, end, screen, pg, clock, i=0):
+def MazeSolve(puzzle, moveX, moveY, position, res, end, screen, pg, clock, NotNeeded):
     x, y = position
     if position == end:
         resCoords = [puzzle.Center(x), puzzle.Center(y)]
@@ -21,15 +21,12 @@ def MazeSolve(puzzle, moveX, moveY, position, res, end, screen, pg, clock, i=0):
             res[xNew][yNew] = 1
             resCoords = [puzzle.Center(yNew), puzzle.Center(xNew)]
             puzzle.addToPath(resCoords)
-            for path in puzzle.path:
-                screen.blit(path[0].surf, path[0].rect)
-            clock.tick(15)
-            pg.display.update()
+            # print(resCoords)
 
-            if MazeSolve(puzzle, moveX, moveY, [xNew, yNew], res, end, screen, pg, clock):
+            if MazeSolve(puzzle, moveX, moveY, [xNew, yNew], res, end, screen, pg, clock, NotNeeded):
                 return True
-
             res[xNew][yNew] = 0
+
 
     return False
 
@@ -40,16 +37,15 @@ def solveMaze(puzzle: Puzzle, start, screen, pg, clock):
     res[start[0]][start[1]] = 1
     moveX = [-1, 1, 0, 0]
     moveY = [0, 0, -1, 1]
-
-    if MazeSolve(puzzle, moveX, moveY, start, res, list(puzzle.end), screen, pg, clock):
-        pass
+    NotNeeded = []
+    if MazeSolve(puzzle, moveX, moveY, start, res, list(puzzle.end), screen, pg, clock, NotNeeded):
+        for coords in NotNeeded:
+            print(coords, type(coords))
+            puzzle.path.pop(puzzle.path.index(coords))
+        for path in puzzle.path:
+            screen.blit(path[0].surf, path[0].rect)
+            clock.tick(15)
+            pg.display.update()
     else:
         print("No sol")
 
-
-if __name__ == '__main__':
-    maze = [[1, 0, 0, 0],
-            [1, 1, 0, 1],
-            [0, 1, 1, 1],
-            [1, 0, 1, 1],
-            [1, 0, 1, 1]]

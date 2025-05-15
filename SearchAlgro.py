@@ -104,7 +104,3 @@ class SearchAlgo:
         self.Puzzle = Puzzle
         self.DfsDict = None
         sys.setrecursionlimit(100000)
-
-
-if __name__ == "__main__":
-    pass
